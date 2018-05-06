@@ -1,0 +1,162 @@
+---
+Homework Assignmnet 2
+========================================================
+Hello my name is Vaibhav Chugh and my GaTech ID is "vchugh3". Following is my homework 2 assignment in R mark down (Rmd).
+My GTID is 902840098
+
+Expected Code run time is 2 minutes.
+---
+
+
+1. Professional Education by State [20 points]
+
+Plotting a box plot to understand the distribution.
+```{r Problem 1}
+#Load ggolot 2
+library(ggplot2)
+
+#Load midwest
+data(midwest)
+
+#Plot a box plot by state.
+ggplot(midwest, aes(reorder(state, -percprof, mean), percprof)) + geom_boxplot() + coord_flip() + labs (title = "Distribution of percprof values by within each State", y = "Percentage", x = "State")
+
+# Calculating the mean and the median
+print ("Mean of percprof grouped by state")
+tapply(midwest$percprof, midwest$state, mean)
+
+print ("Median of percprof grouped by state")
+tapply(midwest$percprof, midwest$state, median)
+
+#Calculate the total percentage of people who have professional degree per state
+midwest$edupop = (midwest$poptotal * midwest$percprof)/100
+summary_table = aggregate(midwest$poptotal, by=list(Category=midwest$state), FUN=sum)
+colnames(summary_table)[2] <- "totalpop"
+total_profedupop_by_state = aggregate(midwest$edupop, by=list(Category=midwest$state), FUN=sum)
+summary_table$profedupop[summary_table$Category == total_profedupop_by_state$Category] = total_profedupop_by_state$x
+summary_table$percentage = (summary_table$profedupop/summary_table$totalpop)*100
+print (summary_table)
+```
+
+
+
+
+
+2. School and College Education by State [20 points]
+```{r Problem 2}
+#Load ggolot 2
+library(ggplot2)
+
+#Load midwest
+data(midwest)
+
+#Plot three-way relationship between the percentage of people with a high school diploma in each county (perchsd), the percentage of college educated population in each county (percollege), and the state.
+DF = midwest[, c('state','perchsd', 'percollege')] # Extracting 3 columns from midwest
+library ('GGally')
+
+#Defining a density function to make the graph transparent
+dens <- function(data, mapping, ...) {ggplot(data = data, mapping=mapping) + geom_density(..., alpha = 0.7)}
+
+#Plotting the relationship graph to depict the relationship between 
+ggpairs(data = DF, mapping=aes(colour = state),  diag = list(continuous = dens))
+```
+
+
+
+
+4. Random Scatter Plots [20 points]
+```{r Problem 4}
+n=seq(500, 40000, by = 500)
+j = 1;
+
+#Create a data frame with 80 rows and 4 columns.
+# Column 1 will store value of N
+# Column 2 will store value of PNG_SIZE
+# Column 3 will store value of PDF_SIZE
+# Column 4 will store value of JPEG_SIZE
+
+sizes_df <- as.data.frame(matrix(0, ncol = 4, nrow = 80))
+x <- c("N", "png_size", "pdf_size", "jpg_size")
+colnames(sizes_df) <- x
+
+# For loop to iterate the value of N and save 3 different file formats and record the value of each in an array
+for (i in n)
+{
+  a = runif(i, min = 0, max = 1)
+  # To be see a variation of the file size, I will remopve the labels. Hence I have commented out this line since labels add a constant which we may not need. 
+  #sizes_vec[j,1] = i
+  sizes_df$N[j] = i
+  
+  png("png_file.png")
+  plot(a, pch = 16, cex = 0.1)
+  dev.off()
+  png_size = file.size('png_file.png')
+  sizes_df$png_size[j] = png_size
+  
+  pdf("pdf_file.pdf")
+  plot(a, pch = 16, cex = 0.1)
+  dev.off()
+  pdf_size = file.size('pdf_file.pdf')
+  sizes_df$pdf_size[j] = pdf_size
+  
+  jpeg("jpg_file.jpg")
+  plot(a, pch = 16, cex = 0.1)
+  dev.off()
+  jpg_size = file.size('jpg_file.jpg')
+  sizes_df$jpg_size[j] = jpg_size
+
+  j = j + 1
+}
+
+# Plot the first curve by calling plot() function
+# First curve is plotted
+ plot(sizes_df$N, sizes_df$png_size, type="o", col="blue", pch="o", lty=1, ylim=c(0,250000), xlab = "Value of N", ylab = "Filesize in bytes", )
+
+ #Add a line
+ points(sizes_df$N, sizes_df$pdf_size, col="red", pch="*")
+ lines(sizes_df$N, sizes_df$pdf_size, col="red",lty=2)
+ 
+ #Add another line
+ points(sizes_df$N, sizes_df$jpg_size, col="dark red",pch="+")
+ lines(sizes_df$N, sizes_df$jpg_size, col="dark red", lty=3)
+ 
+ # Add a legend to the plot
+ legend(1, 225000, legend=c("PNG Size", "PDF Size", "JPG Size"), col=c("blue", "red", "dark red"), lty=1:3, cex=0.8)
+ 
+```
+
+
+5.  [20 points]
+```{r Problem 5}
+#Load ggolot 2
+library(ggplot2)
+
+#Load diamonds
+data(diamonds)
+
+#Part 1
+#Histogram of diamond prices.
+qplot(price, data=diamonds, geom="histogram") + labs (title = "Histogram of Diamond Prices")
+
+#Histogram of diamond carat.
+qplot(carat, data=diamonds, geom="histogram") + labs (title = "Histogram of Diamond Carat")
+
+#Histogram of diamond color.
+ggplot(diamonds, aes(color)) + geom_bar() + labs(title = "Histogram of Diamond Color")
+
+
+#Part2
+#Investigate the three-way relationship between color, carat and price.
+DF = diamonds[, c('color','carat', 'price')] # Extracting 3 columns from diamonds
+library ('GGally')
+
+#Defining a density function to make the graph transparent
+dens <- function(data, mapping, ...) {ggplot(data = data, mapping=mapping) + geom_density(..., alpha = 0.7)}
+
+#Plotting the relationship graph to depict the relationship between 
+ggpairs(data = DF, mapping=aes(colour = color),  diag = list(continuous = dens))
+
+
+```
+
+

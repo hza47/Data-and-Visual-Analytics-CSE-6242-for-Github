@@ -1,0 +1,128 @@
+Homework Assignmnet 1
+========================================================
+
+Hello my name is Vaibhav Chugh and my GaTech ID is "vchugh3". Following is my homework assignment in R mark down (Rmd).
+
+2. Implementation of log_gamma_loop(n).
+Problem Statement: Implement a function that computes and returns the natural logarithm of the gamma value of a positive integer using an iterative loop.
+
+Comments: I added a few checks to make sure the function returns an exception if the entered value is less than 0 or if the entered value is not an integer. This however increases the run time and based on comments from the instructor on Piazza i commented it out.
+
+
+```{r}
+log_gamma_loop<-function(n)
+{
+  
+  #Check whether the number is positive or not.  
+  #if (n <= 0) 
+  #{
+  # print("input should be a positive number")
+  # stop()
+  #}
+  
+  #Check whether the number is integer or not.
+  #stopifnot(n %% 1 == 0)
+  
+  if (n == 1) {return(log(1))}
+  
+  a = 0
+    for (i in n:2){
+    a = a + log(i-1)
+    }
+  return(a)
+}
+```
+
+
+3. Implementation of log_gamma_recursive(n).
+Problem Statement: Implement a function that computes and returns the natural logarithm of the gamma value of a positive integer using a recursion
+
+```{r}
+options(expressions=500000)
+log_gamma_recursive<-function(n)
+{
+  ##Check whether the number is positive or not.  
+  #if (n <= 0) 
+  #{
+  # print("input should be a positive number")
+  # stop()
+  #}
+  ##Check whether the number is integer or not.
+  #stopifnot(n %% 1 == 0) 
+  
+  
+  if ((n == 1) | (n== 2))  {return(log(1))}
+  else {
+    return (log(n-1) + log_gamma_recursive(n - 1))
+  }
+}
+```
+
+
+4.  Implementation of sum_log_gamma_loop(n) and sum_log_gamma_recursive(n).
+Problem Statement: Using the functions you created in problems 2 & 3, create two additional functions (one for the loop implementation and one for the recursive implementation) that take an integer n and sum the Log Gamma results over the range 1 to n (inclusive).
+
+```{r}
+sum_log_gamma_loop<-function(n)
+{
+  a = 0
+  for (i in 1:n){
+    a = a + log_gamma_loop(i)
+  }
+  return(a)
+}
+```
+
+```{r}
+sum_log_gamma_recursive<-function(n)
+{
+  a = 0
+  for (i in 1:n){
+    a = a + log_gamma_recursive(i)
+  }
+  return(a)
+}
+```
+
+5. Compare Results to Built-In R Function [30 points]
+Implement a third function to compute Sum of Log Gamma using the built-in R function lgamma(n) in place of your own implementations (but with the same summing approach as above):
+
+sum_lgamma(n)
+
+Compare the execution times of your two implementations from problem 4 with this implementation based on the built-in R function, by running each function on a range of values for n. You may use the function system.time() (Links to an external site.)Links to an external site. to measure execution time. Which implementation seems to grow fastest and which one grows slowest with increasing n?
+
+Support your observation by reporting execution times in a table OR a single line plot. If using a table, do not show more than 10-15 rows of data (e.g. if you vary n from 1 to 100, you may show every 10th row). If using a plot, properly label each line (curve) and preferably use different colors for them.
+
+```{r}
+sum_lgamma<-function(n)
+{
+ a = 0
+   for (i in 1:n){
+    a = a + lgamma(i)
+  }
+ return(a)
+}
+```
+
+Calculate system time for each implementation. First I create 2 dimensional vector to store the values of the run times for all the 3 different schemes. Then I calcualte the run times and store the values in the 2 dimensional array named  "times_vec". This 2 dimensional array has 40 rows and 3 columns.
+Column 1 - Run time for the for loop implementation.
+Column 2 - Run time for the for recursive implementation.
+Column 3 - Run time for the for inbuilt function 
+
+I am running 100 through 4000 iterations with steps of 100 and collecting the run times.
+
+
+```{r}
+w=seq(100, 4000, by = 100)
+times_vec = array(0,c(40,3)) 
+a = 0
+for (i in w){
+    a = a + 1;
+    stLoop = system.time(sum_log_gamma_loop(i))
+    stRecursive = system.time(sum_log_gamma_recursive(i))
+    stlgamma = system.time(sum_lgamma(i))
+    times_vec[a,1] <- stLoop[1]
+    times_vec[a,2] <- stRecursive[1]
+    times_vec[a,3] <- stlgamma[1]
+  }
+```

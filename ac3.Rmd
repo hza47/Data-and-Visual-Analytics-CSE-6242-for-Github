@@ -1,0 +1,34 @@
+---
+title: "ac3"
+author: "Vaibhav Chugh"
+date: "March 16, 2018"
+output: pdf_document
+GT USer: "vchugh3"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r airports}
+#Install the required packages
+install.packages("mapproj")
+install.packages("ggmap")
+install.packages("DeducerSpatial")
+
+library(maps)
+
+#dataset with Latitude, Longitude and Altitude of all airports of the world
+# Source of the Dataset: https://openflights.org/data.html
+
+#read the dataset in a dataframe. Since the CSV is less than 1 MB it has been attached in the assignment submission. Please feel free to change the path to load this file
+airports <- read.csv("C:/Users/vchugh/Documents/Academics/Georgia Tech/Spring 2018/CS 6242 Data and Visual Analytics/Activity 3/Airports in the World.csv")
+
+#Grab all the USA airports and put it in a dataframe
+airports_usa <-  airports[airports$Country == "United States",]
+
+#Plot the map and overlay the points on the map
+map("usa", fill=TRUE, col="white", bg="lightblue")
+points(airports_usa$Longitude, airports_usa$Latitude, col="red", pch=20, cex = airports_usa$Altitude/4000)
+title(paste ("Airports by Altitude in USA"))
+
+```
